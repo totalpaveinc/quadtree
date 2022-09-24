@@ -33,12 +33,25 @@ add_library(tpquadtree STATIC
 )
 
 # Extent Dependency
-add_subdirectory(third_party/extent extent)
-target_include_directories(tpquadtree
-    PUBLIC third_party/extent/include
-    PUBLIC ./include
-)
-target_link_libraries(tpquadtree tpgeomextent)
+if (NOT DEFINED TP_EXTENT_LIBRARY)
+    add_subdirectory(third_party/extent extent)
+    target_include_directories(tpquadtree
+        PUBLIC third_party/extent/include
+        PUBLIC ./include
+    )
+    target_link_libraries(tpquadtree tpgeomextent)
+else()
+    if (NOT DEFINED TP_EXTENT_LIB_DIR)
+        message(FATAL_ERROR "TP_EXTENT_LIB_DIR is not set. Set it to the path that contains ${TP_EXTENT_LIBRARY}")
+    endif()
+    if (NOT DEFINED TP_EXTENT_INCLUDE_DIR)
+        message(FATAL_ERROR "TP_EXTENT_INCLUDE_DIR is not set. Set it to the path that contains Extent library's include/")
+    endif()
+
+    target_include_directories(tpquadtree PUBLIC ${TP_EXTENT_INCLUDE_DIR})
+    target_link_directories(tpquadtree PUBLIC ${TP_EXTENT_LIB_DIR})
+    target_link_libraries(tpquadtree ${TP_EXTENT_LIBRARY})
+endif()
 
 if (${TP_QUADTREE_BUILD_TESTS})
     message(STATUS "Building QuadTree Test App")
