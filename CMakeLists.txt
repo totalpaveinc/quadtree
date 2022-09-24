@@ -32,12 +32,15 @@ add_library(tpquadtree STATIC
     src/Point.cpp
 )
 
+target_include_directories(tpquadtree
+    PUBLIC ./include
+)
+
 # Extent Dependency
 if (NOT DEFINED TP_EXTENT_LIBRARY)
     add_subdirectory(third_party/extent extent)
     target_include_directories(tpquadtree
         PUBLIC third_party/extent/include
-        PUBLIC ./include
     )
     target_link_libraries(tpquadtree tpgeomextent)
 else()
