@@ -123,7 +123,7 @@ namespace TP { namespace qt {
         quadExtent.translate(0.0, ty);
         $se = new Node($bucketSize, quadExtent);
 
-        quadExtent.translate(-tx, -ty);
+        quadExtent.translate(-tx, 0.0);
         $sw = new Node($bucketSize, quadExtent);
 
         const Extent<double>& nwExtent = $nw->getExtent();
