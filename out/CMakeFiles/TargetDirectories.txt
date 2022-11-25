@@ -1,0 +1,6 @@
+/Users/tylerbreau/dev/totalpave/quadtree/out/CMakeFiles/tpquadtree.dir
+/Users/tylerbreau/dev/totalpave/quadtree/out/CMakeFiles/edit_cache.dir
+/Users/tylerbreau/dev/totalpave/quadtree/out/CMakeFiles/rebuild_cache.dir
+/Users/tylerbreau/dev/totalpave/quadtree/out/extent/CMakeFiles/tpgeomextent.dir
+/Users/tylerbreau/dev/totalpave/quadtree/out/extent/CMakeFiles/edit_cache.dir
+/Users/tylerbreau/dev/totalpave/quadtree/out/extent/CMakeFiles/rebuild_cache.dir

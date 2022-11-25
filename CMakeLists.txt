@@ -26,10 +26,14 @@ add_library(tpquadtree STATIC
     include/tp/qt/QuadTree.h
     include/tp/qt/Node.h
     include/tp/qt/Point.h
+    include/tp/qt/DepthQuadTree.h
+    include/tp/qt/DepthNode.h
 
     src/QuadTree.cpp
     src/Node.cpp
     src/Point.cpp
+    src/DepthQuadTree.cpp
+    src/DepthNode.cpp
 )
 
 target_include_directories(tpquadtree
