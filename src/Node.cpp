@@ -47,7 +47,7 @@ namespace TP { namespace qt {
     void Node::query(const Extent<double>& extent, std::vector<const void*>& dataList, std::unordered_map<long, bool>& dataManifest) {
         if ($children.size() > 0 && $extent.isInBounds(extent)) {
             for (std::size_t i = 0; i < $children.size(); i++) {
-                const Point* point = $children[i];
+                const QuadPoint* point = $children[i];
                 const void* data = point->getData();
                 long ptr = (long)data;
                 if (dataManifest.find(ptr) == dataManifest.end()) {
@@ -65,7 +65,7 @@ namespace TP { namespace qt {
         }
     }
 
-    void Node::insert(const Point* point) {
+    void Node::insert(const QuadPoint* point) {
         if ($nw != nullptr) {
             // This node has quadrants, so it should be passed down.
 
@@ -74,26 +74,22 @@ namespace TP { namespace qt {
             const Extent<double>& swExtent = $sw->getExtent();
             const Extent<double>& seExtent = $se->getExtent();
 
-            double px = point->getX(), py = point->getY();
-            if (nwExtent.isInBounds(px, py)) {
+            if (point->isInBounds(nwExtent)) {
                 $nw->insert(point);
             }
-            else if (neExtent.isInBounds(px, py)) {
+
+            if (point->isInBounds(neExtent)) {
                 $ne->insert(point);
             }
-            else if (swExtent.isInBounds(px, py)) {
+
+            if (point->isInBounds(swExtent)) {
                 $sw->insert(point);
             }
-            else if (seExtent.isInBounds(px, py)) {
+
+            if (point->isInBounds(seExtent)) {
                 $se->insert(point);
             }
-            else {
-                // This could happen if a pointis attempted to be inserted in
-                // a position that is out of bounds, but I don't think we should
-                // raise an exception for it, but we should find a standard way
-                // of propagating errors.
-                // throw std::runtime_error("Failed to insert point.");
-            }
+
             return;
         }
 
@@ -131,30 +127,26 @@ namespace TP { namespace qt {
         const Extent<double>& swExtent = $sw->getExtent();
         const Extent<double>& seExtent = $se->getExtent();
 
-        double px, py;
-        std::vector<const Point*>::iterator iterator = $children.begin();
+        std::vector<const QuadPoint*>::iterator iterator = $children.begin();
 
         while ($children.size() > 0) {
-            const Point* point = $children.back();
+            const QuadPoint* point = $children.back();
             $children.pop_back();
 
-            px = point->getX();
-            py = point->getY();
-
-            if (nwExtent.isInBounds(px, py)) {
+            if (point->isInBounds(nwExtent)) {
                 $nw->insert(point);
             }
-            else if (neExtent.isInBounds(px, py)) {
+
+            if (point->isInBounds(neExtent)) {
                 $ne->insert(point);
             }
-            else if (swExtent.isInBounds(px, py)) {
+
+            if (point->isInBounds(swExtent)) {
                 $sw->insert(point);
             }
-            else if (seExtent.isInBounds(px, py)) {
+
+            if (point->isInBounds(seExtent)) {
                 $se->insert(point);
-            }
-            else {
-                throw std::runtime_error("Subdivide failed to find quadrant for point");
             }
         }
     }

@@ -16,32 +16,19 @@
 
 #pragma once
 
-#include <tp/geom/Extent.h>
-#include <vector>
-#include <unordered_map>
-#include <cstdint>
 #include <tp/qt/QuadPoint.h>
+#include <tp/geom/Extent.h>
 
 namespace TP { namespace qt {
-    class Node {
+    class RectPoint: public QuadPoint {
         public:
-            Node(uint32_t bucketSize, const geom::Extent<double>& extent);
-            virtual ~Node();
+            RectPoint(geom::Extent<double> extent);
+            RectPoint(geom::Extent<double> extent, const void* data);
+            const bool isInBounds(const geom::Extent<double>& extent) const override;
 
-            const geom::Extent<double>& getExtent(void) const;
-            void subdivide(void);
-
-            void insert(const QuadPoint* point);
-
-            void query(const geom::Extent<double>& extent, std::vector<const void*>& data, std::unordered_map<long, bool>& dataManifest);
+            const geom::Extent<double> getExtent(void) const;
 
         private:
             geom::Extent<double> $extent;
-            Node* $nw;
-            Node* $ne;
-            Node* $sw;
-            Node* $se;
-            std::vector<const QuadPoint*> $children;
-            uint32_t $bucketSize;
     };
 }}

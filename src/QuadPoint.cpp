@@ -14,23 +14,22 @@
     limitations under the License.
 */
 
-#pragma once
+#include <tp/qt/QuadPoint.h>
 
 namespace TP { namespace qt {
-    class Point {
-        public:
-            Point(void);
-            Point(double x, double y);
-            Point(double x, double y, const void* data);
-            virtual ~Point();
+    QuadPoint::QuadPoint(void) {
+        $data = nullptr;
+    }
 
-            double getX(void) const;
-            double getY(void) const;
-            const void* getData(void) const;
+    QuadPoint::QuadPoint(const void* data) {
+        $data = data;
+    }
 
-        private:
-            double $x;
-            double $y;
-            const void* $data;
-    };
+    QuadPoint::~QuadPoint() {
+        $data = nullptr;
+    }
+
+    const void* QuadPoint::getData(void) const {
+        return $data;
+    }
 }}

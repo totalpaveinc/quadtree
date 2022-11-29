@@ -32,12 +32,28 @@ namespace TP { namespace qt {
     }
 
     void QuadTree::insert(double x, double y, const void* data) {
-        Point* point = new Point(x, y, data);
+        XYPoint* point = new XYPoint(x, y, data);
+        insert(point, data);
+    }
+    void QuadTree::insert(XYPoint* point, const void* data) {
         $data.push_back(point);
         $root->insert(point);
     }
 
-    void QuadTree::query(const Extent<double>& extent, std::vector<const void*>& outData) {
+    void QuadTree::insert(double x1, double y1, double x2, double y2, const void* data) {
+        const geom::Extent<double>* extent = new geom::Extent(x1, y1, x2, y2);
+        insert(*extent, data);
+    }
+    void QuadTree::insert(const geom::Extent<double>& extent, const void* data) {
+        RectPoint* point = new RectPoint(extent, data);
+        insert(point, data);
+    }
+    void QuadTree::insert(RectPoint* point, const void* data) {
+        $data.push_back(point);
+        $root->insert(point);
+    }
+
+    void QuadTree::query(const geom::Extent<double>& extent, std::vector<const void*>& outData) {
         outData.clear();
         // This is used to keep track of data to ensure only unique data is inserted into the out array.
         // as there could be many points to one user dataset.
