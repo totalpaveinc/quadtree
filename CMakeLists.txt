@@ -25,11 +25,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(tpquadtree STATIC
     include/tp/qt/QuadTree.h
     include/tp/qt/Node.h
-    include/tp/qt/Point.h
+    include/tp/qt/QuadPoint.h
+    include/tp/qt/XYPoint.h
+    include/tp/qt/RectPoint.h
 
     src/QuadTree.cpp
     src/Node.cpp
-    src/Point.cpp
+    src/QuadPoint.cpp
+    src/XYPoint.cpp
+    src/RectPoint.cpp
 )
 
 target_include_directories(tpquadtree

@@ -14,42 +14,38 @@
     limitations under the License.
 */
 
-#include <tp/qt/Point.h>
+#include <tp/qt/XYPoint.h>
 
 namespace TP { namespace qt {
-    Point::Point(void) {
+    XYPoint::XYPoint(void) {
         $x = 0.0;
         $y = 0.0;
-        $data = nullptr;
     }
 
-    Point::Point(double x, double y) {
+    XYPoint::XYPoint(double x, double y) {
         $x = x;
         $y = y;
-        $data = nullptr;
     }
 
-    Point::Point(double x, double y, const void* data) {
+    XYPoint::XYPoint(double x, double y, const void* data): QuadPoint(data) {
         $x = x;
         $y = y;
-        $data = data;
     }
 
-    Point::~Point() {
+    XYPoint::~XYPoint() {
         $x = 0.0;
         $y = 0.0;
-        $data = nullptr;
     }
 
-    double Point::getX(void) const {
+    double XYPoint::getX(void) const {
         return $x;
     }
 
-    double Point::getY(void) const {
+    double XYPoint::getY(void) const {
         return $y;
     }
 
-    const void* Point::getData(void) const {
-        return $data;
+    const bool XYPoint::isInBounds(const geom::Extent<double>& extent) const {
+        return extent.isInBounds($x, $y);
     }
 }}
