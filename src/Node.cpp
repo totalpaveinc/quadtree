@@ -93,6 +93,9 @@ namespace TP { namespace qt {
             return;
         }
 
+        if ($children.size() == 0) {
+            $children.reserve($bucketSize);
+        }
         // If we made it here, then we are at a leaf node.
         $children.push_back(point);
 
@@ -149,5 +152,7 @@ namespace TP { namespace qt {
                 $se->insert(point);
             }
         }
+
+        $children.shrink_to_fit();
     }
 }}
