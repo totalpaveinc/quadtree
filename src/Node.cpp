@@ -16,13 +16,13 @@
 
 #include <tp/qt/Node.h>
 #include <stdexcept>
+#include <tp/qt/QuadTreeContext.h>
 
 namespace TP { namespace qt {
     using namespace TP::geom;
 
-    Node::Node(uint32_t bucketSize, const Extent<double>& extent) {
+    Node::Node(const Extent<double>& extent) {
         $extent = extent;
-        $bucketSize = bucketSize;
 
         // These only exists once this node has been subdivided
         $nw = nullptr;
@@ -45,16 +45,19 @@ namespace TP { namespace qt {
     }
 
     void Node::query(const Extent<double>& extent, std::vector<const void*>& dataList, std::unordered_map<long, bool>& dataManifest) {
-        if ($children.size() > 0 && $extent.isInBounds(extent)) {
-            for (std::size_t i = 0; i < $children.size(); i++) {
-                const QuadPoint* point = $children[i];
+        if ($child != nullptr && $extent.isInBounds(extent)) {
+            Node::PointChild* current = $child;
+            do {
+                const QuadPoint* point = QuadTreeContext::getInstance()->getPoint(current->index);
                 const void* data = point->getData();
                 long ptr = (long)data;
                 if (dataManifest.find(ptr) == dataManifest.end()) {
                     dataManifest.insert(std::pair<long, bool>(ptr, true));
                     dataList.push_back(data);
                 }
-            }
+
+                current = current->next;
+            } while (current != nullptr);
         }
 
         if ($nw != nullptr) {
@@ -65,7 +68,7 @@ namespace TP { namespace qt {
         }
     }
 
-    void Node::insert(const QuadPoint* point) {
+    void Node::insert(std::size_t index, const QuadPoint* point) {
         if ($nw != nullptr) {
             // This node has quadrants, so it should be passed down.
 
@@ -75,28 +78,32 @@ namespace TP { namespace qt {
             const Extent<double>& seExtent = $se->getExtent();
 
             if (point->isInBounds(nwExtent)) {
-                $nw->insert(point);
+                $nw->insert(index, point);
             }
 
             if (point->isInBounds(neExtent)) {
-                $ne->insert(point);
+                $ne->insert(index, point);
             }
 
             if (point->isInBounds(swExtent)) {
-                $sw->insert(point);
+                $sw->insert(index, point);
             }
 
             if (point->isInBounds(seExtent)) {
-                $se->insert(point);
+                $se->insert(index, point);
             }
 
             return;
         }
 
         // If we made it here, then we are at a leaf node.
-        $children.push_back(point);
+        Node::PointChild newChild = {
+            index, $child
+        };
+        $child = &newChild;
+        $childCount += 1;
 
-        if ($children.size() >= $bucketSize) {
+        if ($childCount >= QuadTreeContext::getInstance()->getBucketSize()) {
             subdivide();
         }
     }
@@ -111,43 +118,43 @@ namespace TP { namespace qt {
         double tx, ty;
         quadExtent.getRange(tx, ty);
 
-        $nw = new Node($bucketSize, quadExtent);
+        $nw = new Node(quadExtent);
 
         quadExtent.translate(tx, 0.0);
-        $ne = new Node($bucketSize, quadExtent);
+        $ne = new Node(quadExtent);
 
         quadExtent.translate(0.0, ty);
-        $se = new Node($bucketSize, quadExtent);
+        $se = new Node(quadExtent);
 
         quadExtent.translate(-tx, 0.0);
-        $sw = new Node($bucketSize, quadExtent);
+        $sw = new Node(quadExtent);
 
         const Extent<double>& nwExtent = $nw->getExtent();
         const Extent<double>& neExtent = $ne->getExtent();
         const Extent<double>& swExtent = $sw->getExtent();
         const Extent<double>& seExtent = $se->getExtent();
 
-        std::vector<const QuadPoint*>::iterator iterator = $children.begin();
-
-        while ($children.size() > 0) {
-            const QuadPoint* point = $children.back();
-            $children.pop_back();
+        Node::PointChild* current = $child;
+        do {
+            const QuadPoint* point = QuadTreeContext::getInstance()->getPoint(current->index);
 
             if (point->isInBounds(nwExtent)) {
-                $nw->insert(point);
+                $nw->insert(current->index, point);
             }
 
             if (point->isInBounds(neExtent)) {
-                $ne->insert(point);
+                $ne->insert(current->index, point);
             }
 
             if (point->isInBounds(swExtent)) {
-                $sw->insert(point);
+                $sw->insert(current->index, point);
             }
 
             if (point->isInBounds(seExtent)) {
-                $se->insert(point);
+                $se->insert(current->index, point);
             }
-        }
+
+            current = current->next;
+        } while (current != nullptr);
     }
 }}

@@ -16,34 +16,33 @@
 
 #pragma once
 
-#include <tp/qt/Node.h>
 #include <cstdint>
-#include <tp/geom/Extent.h>
 #include <vector>
 #include <tp/qt/QuadPoint.h>
 #include <tp/qt/XYPoint.h>
 #include <tp/qt/RectPoint.h>
 
 namespace TP { namespace qt {
-    class QuadTree {
+    class QuadTreeContext {
         public:
-            QuadTree(uint32_t bucketSize, const geom::Extent<double>& extent);
-            virtual ~QuadTree();
+            QuadTreeContext(void);
 
-            /**
-                Uses XYPoint
-            */
-            void insert(double x, double y, const void* data);
-            /**
-                Uses RectPoint
-            */
-            void insert(double x1, double y1, double x2, double y2, const void* data);
-            void insert(const geom::Extent<double>& extent, const void* data);
-            
-            void insert(QuadPoint* point, const void* data);
-            void query(const geom::Extent<double>& extent, std::vector<const void*>& outData);
+            static QuadTreeContext* getInstance(void) {
+                if ($instance == nullptr) {
+                    $instance = new QuadTreeContext();
+                }
+                return $instance;
+            }
+
+            uint32_t getBucketSize(void);
+            QuadPoint* getPoint(std::size_t index);
+
+            void setBucketSize(uint32_t size);
+            void setData(std::vector<QuadPoint*>* data);
         private:
-            Node* $root;
-            std::vector<QuadPoint*> $data;
+            uint32_t $size;
+            std::vector<QuadPoint*>* $data;
+
+            static QuadTreeContext* $instance;
     };
 }}

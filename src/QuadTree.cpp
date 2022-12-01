@@ -15,12 +15,16 @@
 */
 
 #include <tp/qt/QuadTree.h>
+#include <tp/qt/QuadTreeContext.h>
 
 namespace TP { namespace qt {
     using namespace TP::geom;
 
     QuadTree::QuadTree(uint32_t bucketSize, const Extent<double>& extent) {
-        $root = new Node(bucketSize, extent);
+        QuadTreeContext* context = QuadTreeContext::getInstance();
+        context->setBucketSize(bucketSize);
+        context->setData(&$data);
+        $root = new Node(extent);
     }
 
     QuadTree::~QuadTree() {
@@ -35,10 +39,6 @@ namespace TP { namespace qt {
         XYPoint* point = new XYPoint(x, y, data);
         insert(point, data);
     }
-    void QuadTree::insert(XYPoint* point, const void* data) {
-        $data.push_back(point);
-        $root->insert(point);
-    }
 
     void QuadTree::insert(double x1, double y1, double x2, double y2, const void* data) {
         const geom::Extent<double>* extent = new geom::Extent(x1, y1, x2, y2);
@@ -48,9 +48,10 @@ namespace TP { namespace qt {
         RectPoint* point = new RectPoint(extent, data);
         insert(point, data);
     }
-    void QuadTree::insert(RectPoint* point, const void* data) {
+
+    void QuadTree::insert(QuadPoint* point, const void* data) {
         $data.push_back(point);
-        $root->insert(point);
+        $root->insert($data.size() - 1, point);
     }
 
     void QuadTree::query(const geom::Extent<double>& extent, std::vector<const void*>& outData) {

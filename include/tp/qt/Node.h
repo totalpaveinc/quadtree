@@ -25,23 +25,27 @@
 namespace TP { namespace qt {
     class Node {
         public:
-            Node(uint32_t bucketSize, const geom::Extent<double>& extent);
+            Node(const geom::Extent<double>& extent);
             virtual ~Node();
 
             const geom::Extent<double>& getExtent(void) const;
             void subdivide(void);
 
-            void insert(const QuadPoint* point);
+            void insert(std::size_t index, const QuadPoint* point);
 
             void query(const geom::Extent<double>& extent, std::vector<const void*>& data, std::unordered_map<long, bool>& dataManifest);
 
         private:
+            struct PointChild {
+                std::size_t index;
+                Node::PointChild* next;
+            };
             geom::Extent<double> $extent;
             Node* $nw;
             Node* $ne;
             Node* $sw;
             Node* $se;
-            std::vector<const QuadPoint*> $children;
-            uint32_t $bucketSize;
+            Node::PointChild* $child;
+            std::size_t $childCount;
     };
 }}
