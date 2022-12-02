@@ -25,7 +25,10 @@
 namespace TP { namespace qt {
     class Node {
         public:
-            Node(uint32_t bucketSize, const geom::Extent<double>& extent);
+            // depth influence whether or not a Node is subdividable.
+            // Every time a Node is subdivided, the child Nodes will receive the parent's depth - 1.
+            // If depth is 1, the Node will not subdivide any further.
+            Node(uint32_t bucketSize, const geom::Extent<double>& extent, uint8_t depth);
             virtual ~Node();
 
             const geom::Extent<double>& getExtent(void) const;
@@ -43,5 +46,6 @@ namespace TP { namespace qt {
             Node* $se;
             std::vector<const QuadPoint*> $children;
             uint32_t $bucketSize;
+            uint8_t $depth;
     };
 }}

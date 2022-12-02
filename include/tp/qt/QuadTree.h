@@ -18,6 +18,7 @@
 
 #include <tp/qt/Node.h>
 #include <cstdint>
+#include <limits>
 #include <tp/geom/Extent.h>
 #include <vector>
 #include <tp/qt/QuadPoint.h>
@@ -27,7 +28,7 @@
 namespace TP { namespace qt {
     class QuadTree {
         public:
-            QuadTree(uint32_t bucketSize, const geom::Extent<double>& extent);
+            QuadTree(uint32_t bucketSize, const geom::Extent<double>& extent, uint8_t maxDepth = std::numeric_limits<uint8_t>::max());
             virtual ~QuadTree();
 
             /**
