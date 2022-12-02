@@ -45,12 +45,25 @@ namespace TP { namespace qt {
     }
 
     void Node::query(const Extent<double>& extent, std::vector<const void*>& dataList, std::unordered_map<long, bool>& dataManifest) {
+        // isInBounds is the first pass filter.
+        // It checks to see if the requested extent is at least partially within the bounds of the quad extent.
+        // The first pass filter is a very broad and inaccurate filter, it often includes many false possitives.
+        // The false positives happen because quad extent is bigger than the requested extent, it ends up selecting
+        // a lot of extra data in the general surrounding area of the requested extent.
+        // The quad extent is often bigger than the requested extent because there is not enough data for the quad to split into smaller quads.
         if ($children.size() > 0 && $extent.isInBounds(extent)) {
             for (std::size_t i = 0; i < $children.size(); i++) {
                 const QuadPoint* point = $children[i];
                 const void* data = point->getData();
                 long ptr = (long)data;
-                if (dataManifest.find(ptr) == dataManifest.end()) {
+                if (
+                    dataManifest.find(ptr) == dataManifest.end() &&
+                    // Second pass filtering
+                    // Test each QuadPoint against the requested extent.
+                    // The second pass filter has medium accuracy.
+                    // Most false positives are caught but long diagonal lines still have many false positives.
+                    point->isInBounds(extent)
+                ) {
                     dataManifest.insert(std::pair<long, bool>(ptr, true));
                     dataList.push_back(data);
                 }
