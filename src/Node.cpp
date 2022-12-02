@@ -20,9 +20,10 @@
 namespace TP { namespace qt {
     using namespace TP::geom;
 
-    Node::Node(uint32_t bucketSize, const Extent<double>& extent) {
+    Node::Node(uint32_t bucketSize, const Extent<double>& extent, uint8_t depth) {
         $extent = extent;
         $bucketSize = bucketSize;
+        $depth = depth;
 
         // These only exists once this node has been subdivided
         $nw = nullptr;
@@ -112,31 +113,32 @@ namespace TP { namespace qt {
         // If we made it here, then we are at a leaf node.
         $children.push_back(point);
 
-        if ($children.size() >= $bucketSize) {
+        if ($children.size() >= $bucketSize && $depth != 1) {
             subdivide();
         }
     }
 
     void Node::subdivide(void) {
-        if ($nw != nullptr) {
+        if ($nw != nullptr || $depth == 1) {
             // This node has already been subdivided.
             return;
         }
 
         Extent<double> quadExtent = Extent<double>::quad($extent);
         double tx, ty;
+        uint8_t childDepth = $depth - 1;
+        
         quadExtent.getRange(tx, ty);
-
-        $nw = new Node($bucketSize, quadExtent);
+        $nw = new Node($bucketSize, quadExtent, childDepth);
 
         quadExtent.translate(tx, 0.0);
-        $ne = new Node($bucketSize, quadExtent);
+        $ne = new Node($bucketSize, quadExtent, childDepth);
 
         quadExtent.translate(0.0, ty);
-        $se = new Node($bucketSize, quadExtent);
+        $se = new Node($bucketSize, quadExtent, childDepth);
 
         quadExtent.translate(-tx, 0.0);
-        $sw = new Node($bucketSize, quadExtent);
+        $sw = new Node($bucketSize, quadExtent, childDepth);
 
         const Extent<double>& nwExtent = $nw->getExtent();
         const Extent<double>& neExtent = $ne->getExtent();

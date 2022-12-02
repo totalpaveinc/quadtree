@@ -19,8 +19,9 @@
 namespace TP { namespace qt {
     using namespace TP::geom;
 
-    QuadTree::QuadTree(uint32_t bucketSize, const Extent<double>& extent) {
-        $root = new Node(bucketSize, extent);
+    // Note maxDepth has a default value declared in the headers.
+    QuadTree::QuadTree(uint32_t bucketSize, const Extent<double>& extent, uint8_t maxDepth) {
+        $root = new Node(bucketSize, extent, maxDepth);
     }
 
     QuadTree::~QuadTree() {
