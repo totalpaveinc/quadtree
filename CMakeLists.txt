@@ -3,17 +3,6 @@ cmake_minimum_required(VERSION 3.22.1)
 
 project(tpquadtree VERSION 0.0.1)
 
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "") 
-    SET(CMAKE_BUILD_TYPE "Debug")
-endif()
-
-if (
-    (NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release") AND
-    (NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-)
-    message(FATAL_ERROR "Invalid build type \"${CMAKE_BUILD_TYPE}\" for xcodebuild")
-endif()
-
 if (PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
     message(FATAL_ERROR "In-source builds are not allowed")
 endif()
