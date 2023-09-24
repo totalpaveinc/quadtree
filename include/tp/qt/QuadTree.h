@@ -16,11 +16,11 @@
 
 #pragma once
 
-#include <tp/qt/Node.h>
 #include <cstdint>
 #include <limits>
-#include <tp/geom/Extent.h>
 #include <vector>
+#include <tp/qt/Node.h>
+#include <tp/geom/Extent.h>
 #include <tp/qt/QuadPoint.h>
 #include <tp/qt/XYPoint.h>
 #include <tp/qt/RectPoint.h>

@@ -145,8 +145,6 @@ namespace TP { namespace qt {
         const Extent<double>& swExtent = $sw->getExtent();
         const Extent<double>& seExtent = $se->getExtent();
 
-        std::vector<const QuadPoint*>::iterator iterator = $children.begin();
-
         while ($children.size() > 0) {
             const QuadPoint* point = $children.back();
             $children.pop_back();
