@@ -52,7 +52,7 @@ namespace TP { namespace qt {
         // The false positives happen because quad extent is bigger than the requested extent, it ends up selecting
         // a lot of extra data in the general surrounding area of the requested extent.
         // The quad extent is often bigger than the requested extent because there is not enough data for the quad to split into smaller quads.
-        if ($children.size() > 0 && $extent.isInBounds(extent)) {
+        if ($extent.isInBounds(extent)) {
             for (std::size_t i = 0; i < $children.size(); i++) {
                 const QuadPoint* point = $children[i];
                 const void* data = point->getData();
@@ -69,13 +69,13 @@ namespace TP { namespace qt {
                     dataList.push_back(data);
                 }
             }
-        }
 
-        if ($nw != nullptr) {
-            $nw->query(extent, dataList, dataManifest);
-            $ne->query(extent, dataList, dataManifest);
-            $sw->query(extent, dataList, dataManifest);
-            $se->query(extent, dataList, dataManifest);
+            if ($nw != nullptr) {
+                $nw->query(extent, dataList, dataManifest);
+                $ne->query(extent, dataList, dataManifest);
+                $sw->query(extent, dataList, dataManifest);
+                $se->query(extent, dataList, dataManifest);
+            }
         }
     }
 
