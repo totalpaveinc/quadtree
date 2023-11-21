@@ -54,11 +54,11 @@ namespace TP { namespace qt {
         $root->insert(point);
     }
 
-    void QuadTree::query(const geom::Extent<double>& extent, std::vector<const void*>& outData) {
+    void QuadTree::query(const geom::Extent<double>& extent, std::vector<const void*>& outData, std::function<bool(const Extent<double>&, const QuadPoint*)>* filter) {
         outData.clear();
         // This is used to keep track of data to ensure only unique data is inserted into the out array.
         // as there could be many points to one user dataset.
         std::unordered_map<long, bool> manifest;
-        $root->query(extent, outData, manifest);
+        $root->query(extent, outData, manifest, filter);
     }
 }}

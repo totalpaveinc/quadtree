@@ -21,6 +21,10 @@ void handler(int sig) {
     exit(1);
 }
 
+bool $myfilter(const TP::geom::Extent<double>& extent, const TP::qt::QuadPoint* point) {
+    return true;
+}
+
 int main(int argc, char** argv) {
     using namespace TP::geom;
     using namespace TP::qt;
@@ -45,7 +49,8 @@ int main(int argc, char** argv) {
 
     std::vector<const void*> results;
     Extent<double> query(25.0, 25.0, 100.0, 100.0);
-    qt.query(query, results);
+    std::function<bool(const Extent<double>&, const QuadPoint*)> filter = $myfilter;
+    qt.query(query, results, &filter);
 
     if (results.size() == 0) {
         std::cout << "No Results" << std::endl;
