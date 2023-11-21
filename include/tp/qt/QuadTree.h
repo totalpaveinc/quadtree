@@ -24,6 +24,7 @@
 #include <tp/qt/QuadPoint.h>
 #include <tp/qt/XYPoint.h>
 #include <tp/qt/RectPoint.h>
+#include <functional>
 
 namespace TP { namespace qt {
     class QuadTree {
@@ -42,7 +43,7 @@ namespace TP { namespace qt {
             void insert(double x1, double y1, double x2, double y2, const void* data);
             void insert(const geom::Extent<double>& extent, const void* data);
             void insert(RectPoint* point, const void* data);
-            void query(const geom::Extent<double>& extent, std::vector<const void*>& outData);
+            void query(const geom::Extent<double>& extent, std::vector<const void*>& outData, std::function<bool(const geom::Extent<double>&, const QuadPoint*)>* filter = nullptr);
         private:
             Node* $root;
             std::vector<QuadPoint*> $data;

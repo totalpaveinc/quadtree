@@ -45,7 +45,7 @@ namespace TP { namespace qt {
         return $extent;
     }
 
-    void Node::query(const Extent<double>& extent, std::vector<const void*>& dataList, std::unordered_map<long, bool>& dataManifest) {
+    void Node::query(const Extent<double>& extent, std::vector<const void*>& dataList, std::unordered_map<long, bool>& dataManifest, std::function<bool(const Extent<double>&, const QuadPoint*)>* filter) {
         // isInBounds is the first pass filter.
         // It checks to see if the requested extent is at least partially within the bounds of the quad extent.
         // The first pass filter is a very broad and inaccurate filter, it often includes many false possitives.
@@ -65,16 +65,23 @@ namespace TP { namespace qt {
                     // Most false positives are caught but long diagonal lines still have many false positives.
                     point->isInBounds(extent)
                 ) {
+                    if (
+                        // If filter is defined...
+                        filter != nullptr &&
+                        !((*filter)(extent, point))
+                    ) { // If point fails filter then continue to next point.
+                        continue;
+                    }
                     dataManifest.insert(std::pair<long, bool>(ptr, true));
                     dataList.push_back(data);
                 }
             }
 
             if ($nw != nullptr) {
-                $nw->query(extent, dataList, dataManifest);
-                $ne->query(extent, dataList, dataManifest);
-                $sw->query(extent, dataList, dataManifest);
-                $se->query(extent, dataList, dataManifest);
+                $nw->query(extent, dataList, dataManifest, filter);
+                $ne->query(extent, dataList, dataManifest, filter);
+                $sw->query(extent, dataList, dataManifest, filter);
+                $se->query(extent, dataList, dataManifest, filter);
             }
         }
     }

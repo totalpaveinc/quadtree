@@ -21,6 +21,7 @@
 #include <unordered_map>
 #include <cstdint>
 #include <tp/qt/QuadPoint.h>
+#include <functional>
 
 namespace TP { namespace qt {
     class Node {
@@ -36,7 +37,7 @@ namespace TP { namespace qt {
 
             void insert(const QuadPoint* point);
 
-            void query(const geom::Extent<double>& extent, std::vector<const void*>& data, std::unordered_map<long, bool>& dataManifest);
+            void query(const geom::Extent<double>& extent, std::vector<const void*>& data, std::unordered_map<long, bool>& dataManifest, std::function<bool(const geom::Extent<double>&, const QuadPoint*)>* filter);
 
         private:
             geom::Extent<double> $extent;
